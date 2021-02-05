@@ -22,7 +22,7 @@ nav ul {
 }
 
 nav ul li {
-    display: inline;
+    display: inline-block;
 }
 
 nav ul li a:link,
@@ -47,6 +47,7 @@ nav .active a {
 }
 
 .container {
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -63,6 +64,7 @@ nav .active a {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    overflow: auto;
 }
 
 .diffs header {
@@ -202,6 +204,12 @@ nav .active a {
     padding: 1rem 0 0 0;
 }
 
+#qrcontainer .qframe .qframe-close {
+    font-size: 20px;
+    color: #f00;
+    cursor: pointer;
+}
+
 @media screen and (max-width: 480px) {
 
     nav ul li a:link,
@@ -237,14 +245,12 @@ nav .active a {
         overflow-y: auto;
     }
 }
-.elk-app, body > .ember-view {
-    margin-top: 8rem;
-}
-.bg-log {
-    background: #f5f2f0;
-}
 .bg-light {
     background-color: #f8f9fa!important;
+}
+.left-list {
+    overflow: auto;
+    z-index: 100;
 }
 .text-dark {
     color: #343a40!important;
@@ -254,4 +260,24 @@ nav .active a {
     color: #007bff;
     text-decoration: none;
     background-color: transparent;
+}
+
+/* chrome 滚动条 */
+::-webkit-scrollbar-track-piece {
+    width: 10px;
+    background-color: rgba(140, 130, 130, .3);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: rgba(177, 163, 163, .5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(177, 163, 163, .8);
 }
