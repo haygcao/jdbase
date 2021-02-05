@@ -32,7 +32,7 @@ WhichDep=$(grep "/jd-base" "${ShellDir}/.git/config")
 Scripts2URL=https://github.com/haygcao/sloon
 
 if [[ ${WhichDep} == *github* ]]; then
-  ScriptsURL=https://github.com/LXK9301/jd_scripts
+  ScriptsURL=https://gitee.com/lxk0301/jd_scripts
   ShellURL=https://github.com/haygcao/jdbase
 else
   ScriptsURL=https://gitee.com/lxk0301/jd_scripts
