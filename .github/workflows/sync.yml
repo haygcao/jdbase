@@ -1,15 +1,17 @@
-name: 同步上游仓库
+name: 🔄自动同步🔄
 on:
   schedule:
-    - cron: '0 8 */2 * *'
+    - cron: '0 0-23/1 * * *'
+  workflow_dispatch:
   watch:
     types: started
   repository_dispatch:
-    types: sync-repo
+    types: repo-sync
 jobs:
   repo-sync:
     env:
-      PAT: ${{ secrets.PAT }} #此处PAT需要申请，教程详见：https://www.jianshu.com/p/bb82b3ad1d11
+      PAT: ${{ github.event.client_payload.PAT || secrets.PAT }} #此处PAT需要申请，教程详见：https://www.jianshu.com/p/bb82b3ad1d11
+      dst_key: ${{ secrets.GITEE_PRIVATE_KEY }} # 我自己同步到gitee使用，其他人可忽略
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
@@ -17,11 +19,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: sync hundun
+      - name: 开始🔄自动同步🔄
         uses: repo-sync/github-sync@v2
         if: env.PAT
         with:
           source_repo: "https://github.com/dockere/jd-base.git"
           source_branch: "master"
           destination_branch: "new"
-          github_token: ${{ secrets.PAT }}
+         github_token: ${{ github.event.client_payload.PAT || secrets.PAT }}
