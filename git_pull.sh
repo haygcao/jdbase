@@ -26,22 +26,22 @@ ShellURL=https://github.com/haygcao/jdbase
 
 ## 更新crontab，gitee服务器同一时间限制5个链接，因此每个人更新代码必须错开时间，每次执行git_pull随机生成。
 ## 每天只更新一次,(分.时.延迟)为随机cron
-##function Update_Cron {
-##  if [ -f ${ListCron} ]; then
-##    RanMin=$((${RANDOM} % 60))
-##    RanSleep=$((${RANDOM} % 56))
-##    RanH=$((${RANDOM} % 24))
-##    RanHour="${RanHour},${RanHourArray[i]}"
-##    for ((i=1; i<14; i++)); do
-##      j=$(($i - 1))
-##      tmp=$((${RANDOM} % 3 + ${RanHourArray[j]} + 2))
-##      [[ ${tmp} -lt 24 ]] && RanHourArray[i]=${tmp} || break
-##    done
+function Update_Cron {
+  if [ -f ${ListCron} ]; then
+    RanMin=$((${RANDOM} % 60))
+    RanSleep=$((${RANDOM} % 56))
+    RanH=$((${RANDOM} % 24))
+    RanHour="${RanHour},${RanHourArray[i]}"
+    for ((i=1; i<14; i++)); do
+      j=$(($i - 1))
+      tmp=$((${RANDOM} % 3 + ${RanHourArray[j]} + 2))
+      [[ ${tmp} -lt 24 ]] && RanHourArray[i]=${tmp} || break
+    done
     
-##    perl -i -pe "s|.+(bash git_pull.+)|${RanMin} ${RanH} \* \* \* sleep ${RanSleep} && \1|" ${ListCron}
-##    crontab ${ListCron}
-##  fi
-##}
+    perl -i -pe "s|.+(bash git_pull.+)|${RanMin} ${RanH} \* \* \* sleep ${RanSleep} && \1|" ${ListCron}
+    crontab ${ListCron}
+  fi
+}
 function Git_PullShell {
   echo -e "更新shell脚本，原地址：${ShellURL}\n"
   cd ${ShellDir}
