@@ -21,24 +21,22 @@ ContentNewTask=${ShellDir}/new_task
 ContentDropTask=${ShellDir}/drop_task
 SendCount=${ShellDir}/send_count
 isTermux=${ANDROID_RUNTIME_ROOT}${ANDROID_ROOT}
-ScriptsURL=git@gitee.com:lxk0301/jd_scripts
-ShellURL=https://github.com/haygcao/jdbase
+
+ScriptsURL=git@gitee.com:lxk0301/jd_scripts.git
+ShellURL=https://gitee.com/dockere/jd-base
+DockerURL=https://gitee.com/lxk0301/jd_docker
+
 
 ## 更新crontab，gitee服务器同一时间限制5个链接，因此每个人更新代码必须错开时间，每次执行git_pull随机生成。
-## 每天只更新一次,(分.时.延迟)为随机cron
+## 每天只更新两次,(分.时.延迟)为随机cron
 function Update_Cron {
   if [ -f ${ListCron} ]; then
+    RanHour=$(((RANDOM % 6)+7))
+    ranH=$(((RANDOM % 6)+14))
     RanMin=$((${RANDOM} % 60))
     RanSleep=$((${RANDOM} % 56))
-    RanH=$((${RANDOM} % 24))
-    RanHour="${RanHour},${RanHourArray[i]}"
-    for ((i=1; i<14; i++)); do
-      j=$(($i - 1))
-      tmp=$((${RANDOM} % 3 + ${RanHourArray[j]} + 2))
-      [[ ${tmp} -lt 24 ]] && RanHourArray[i]=${tmp} || break
-    done
-    
-    perl -i -pe "s|.+(bash git_pull.+)|${RanMin} ${RanH} \* \* \* sleep ${RanSleep} && \1|" ${ListCron}
+    H="${RanHour},${ranH}"
+    perl -i -pe "s|.+(bash git_pull.+)|${RanMin} ${H} \* \* \* sleep ${RanSleep} && \1|" ${ListCron}
     crontab ${ListCron}
   fi
 }
@@ -59,13 +57,29 @@ function Git_CloneScripts {
 
 ## 更新scripts
 function Git_PullScripts {
+   echo -e "更新lxk0301脚本，原地址：${DockerURL}\n"
   cd ${ScriptsDir}
   git fetch --all
   ExitStatusScripts=$?
   git reset --hard origin/master
   echo
 }
-
+#随机数
+function rand(){   
+    min=$1   
+    max=$(($2-$min+1))   
+    num=$(date +%s%N)   
+    echo $(($num%$max+$min))   
+}
+## 更改crontab
+function Update_Cron {
+  rnd=$(rand 13 59)
+  if [ -f ${ListCron} ]; then
+  #修改美丽研究院分为随机cron
+    perl -i -pe "s|1 7,12(.+jd_beauty\W*.*)|$rnd 7,12\1|" ${ListCron}
+    crontab ${ListCron}
+  fi
+}
 ## 用户数量UserSum
 function Count_UserSum {
   i=1
@@ -267,7 +281,7 @@ function Add_Cron {
       then
         echo "4 0,9 * * * bash ${ShellJd} ${Cron}" >> ${ListCron}
       else
-        cat ${ListCronLxk}| grep -E "\/${Cron}\." | perl -pe "s|(^.+)node */scripts/(j[drx]_\w+)\.js.+|\1bash ${ShellJd} \2|" >> ${ListCron}
+        cat ${ListCronLxk} | grep -E "\/${Cron}\." | perl -pe "s|(^.+)node */scripts/(j[drx]_\w+)\.js.+|\1bash ${ShellJd} \2|" >> ${ListCron}
       fi
     done
 
@@ -320,11 +334,10 @@ fi
 ## 更新crontab
 [[ $(date "+%-H") -le 2 ]] && Update_Cron
 ## 克隆或更新js脚本
-if [ ${ExitStatusShell} -eq 0 ]; then
-  echo -e "--------------------------------------------------------------\n"
+
   [ -f ${ScriptsDir}/package.json ] && PackageListOld=$(cat ${ScriptsDir}/package.json)
   [ -d ${ScriptsDir}/.git ] && Git_PullScripts || Git_CloneScripts
-fi
+
 
 ## 执行各函数
 if [[ ${ExitStatusScripts} -eq 0 ]]

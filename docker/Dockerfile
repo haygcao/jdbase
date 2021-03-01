@@ -1,6 +1,6 @@
-FROM node:lts-alpine
+FROM node:15.9.0-alpine3.12
 LABEL maintainer="Evine Deng"
-ARG JD_BASE_URL=https://github.com/dockere/jd-base
+ARG JD_BASE_URL=https://gitee.com/dockere/jd-base
 ARG JD_BASE_BRANCH=master
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     LANG=zh_CN.UTF-8 \
@@ -28,6 +28,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && mkdir -p /root/.ssh \
+    && chmod 700 /root/.ssh \
     && cd /root/.ssh \
     && echo -e $KEY > /root/.ssh/id_rsa \
     && chmod 600 /root/.ssh/id_rsa \

@@ -1,11 +1,11 @@
-name: "DockerPush"
+name: "fil"
 on:
   workflow_dispatch:
   
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: DockerPush
+    name: fil
     steps:
       - name: Checkout master
         uses: actions/checkout@master
@@ -16,6 +16,6 @@ jobs:
           imageName: noobx/jd
           dockerFile: docker/Dockerfile
           platform: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
-          tag: gitee
+          tag: fil
           dockerUser: ${{ secrets.DOCKER_USERNAME }}
           dockerPassword: ${{ secrets.DOCKER_PASSWORD }}
