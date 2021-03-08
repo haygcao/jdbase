@@ -36,7 +36,12 @@ function Update_Cron {
     RanMin=$((${RANDOM} % 60))
     RanSleep=$((${RANDOM} % 56))
     H="${RanHour},${ranH}"
+    #git_pull随机cron
     perl -i -pe "s|.+(bash git_pull.+)|${RanMin} ${H} \* \* \* sleep ${RanSleep} && \1|" ${ListCron}
+    #美丽研究院分随机cron
+    perl -i -pe "s|1 7,12(.+jd_beauty\W*.*)|${ranH} 7,12\1|" ${ListCron}
+    #修复joy_run错误cron
+    perl -i -pe "s|18 11,14(.+jd_joy_run\W*.*)|${RanHour} 9-20/2\1|" ${ListCron}
     crontab ${ListCron}
   fi
 }
@@ -64,22 +69,6 @@ function Git_PullScripts {
   git reset --hard origin/master
   echo
 }
-#随机数
-function rand(){   
-    min=$1   
-    max=$(($2-$min+1))   
-    num=$(date +%s%N)   
-    echo $(($num%$max+$min))   
-}
-## 更改crontab
-function Update_Cron {
-  rnd=$(rand 13 59)
-  if [ -f ${ListCron} ]; then
-  #修改美丽研究院分为随机cron
-    perl -i -pe "s|1 7,12(.+jd_beauty\W*.*)|$rnd 7,12\1|" ${ListCron}
-    crontab ${ListCron}
-  fi
-}
 ## 用户数量UserSum
 function Count_UserSum {
   i=1
@@ -92,6 +81,7 @@ function Count_UserSum {
 }
 
 ## 把config.sh中提供的所有账户的PIN附加在jd_joy_run.js中，让各账户相互进行宠汪汪赛跑助力
+## 2021年03月05日脚本已支持账号内部助力
 function Change_JoyRunPins {
   j=${UserSum}
   PinALL=""
@@ -104,7 +94,7 @@ function Change_JoyRunPins {
     PinALL="${PinTempFormat},${PinALL}"
     let j--
   done
-  perl -i -pe "{s|(let invite_pins = \[\")(.+\"\];?)|\1${PinALL}\2|; s|(let run_pins = \[\")(.+\"\];?)|\1${PinALL}\2|}" ${ScriptsDir}/jd_joy_run.js
+#  perl -i -pe "{s|(let invite_pins = \[\')(.+\'\];?)|\1${PinALL}\2|; s|(let run_pins = \[\')(.+\'\];?)|\1${PinALL}\2|}" ${ScriptsDir}/jd_joy_run.js
 }
 
 ## 修改lxk0301大佬js文件的函数汇总
@@ -113,7 +103,6 @@ function Change_ALL {
     . ${FileConf}
     if [ -n "${Cookie1}" ]; then
       Count_UserSum
-      Change_JoyRunPins
     fi
   fi
 }
@@ -281,7 +270,7 @@ function Add_Cron {
       then
         echo "4 0,9 * * * bash ${ShellJd} ${Cron}" >> ${ListCron}
       else
-        cat ${ListCronLxk} | grep -E "\/${Cron}\." | perl -pe "s|(^.+)node */scripts/(j[drx]_\w+)\.js.+|\1bash ${ShellJd} \2|" >> ${ListCron}
+        cat ${ListCronLxk}| grep -E "\/${Cron}\." | perl -pe "s|(^.+)node */scripts/(j[drx]_\w+)\.js.+|\1bash ${ShellJd} \2|" >> ${ListCron}
       fi
     done
 
@@ -334,10 +323,11 @@ fi
 ## 更新crontab
 [[ $(date "+%-H") -le 2 ]] && Update_Cron
 ## 克隆或更新js脚本
-
+if [ ${ExitStatusShell} -eq 0 ]; then
+  echo -e "--------------------------------------------------------------\n"
   [ -f ${ScriptsDir}/package.json ] && PackageListOld=$(cat ${ScriptsDir}/package.json)
   [ -d ${ScriptsDir}/.git ] && Git_PullScripts || Git_CloneScripts
-
+fi
 
 ## 执行各函数
 if [[ ${ExitStatusScripts} -eq 0 ]]

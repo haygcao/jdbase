@@ -88,7 +88,6 @@ function Combin_Sub {
 ## 组合Cookie、Token与互助码
 function Combin_All {
   export JD_COOKIE=$(Combin_Sub Cookie)
-  export JXNCTOKENS=$(Combin_Sub TokenJxnc)
   #东东农场(jd_fruit.js)
   export FRUITSHARECODES=$(Combin_Sub ForOtherFruit)
   #东东萌宠(jd_pet.js)
