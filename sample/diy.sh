@@ -3,7 +3,7 @@
 ########################修改更新频率为一小时一次##############################
 echo -e "开始修改更新时间"
 if [ -f ${ListCron} ]; then
-  perl -i -pe "s|.+(bash git_pull.+)|35 \* \* \* \* && \1|" ${ListCron}
+  perl -i -pe "s|.+(bash git_pull.+)|35 \* \* \* \* \1|" ${ListCron}
   crontab ${ListCron}
   echo -e "修改更新时间成功"
 else
@@ -27,16 +27,21 @@ scripts_base_url_6=https://gitee.com/shylocks/updateTeam/blob/main/
 scripts_base_url_7=https://raw.githubusercontent.com/mit-ywtm/MyScripts/main/daydlt/
 scripts_base_url_8=https://raw.githubusercontent.com/nianyuguai/longzhuzhu/main/
 
+
 ##############################作者脚本名称（必填）##############################
 # 将相应作者的脚本填写到以下变量中
 my_scripts_list_1=""
-my_scripts_list_2="jd_walmart.js jd_entertainment.js jd_mlyjy.js jd_fanslove.js jd_asus_iqiyi.js jd_jump-jump.js jd_shake.js jd_gjmh.js"
+my_scripts_list_2="jd_walmart.js jd_entertainment.js jd_mlyjy.js jd_fanslove.js jd_asus_iqiyi.js jd_jump-jump.js jd_shake.js jd_gjmh.js jd_shakeBean.js jd_xmf.js"
 my_scripts_list_3="jd_collectBlueCoin.js ddxw.js"
 my_scripts_list_4="jx_cfd.js jx_cfd_exchange.js"
 my_scripts_list_5="format_share_jd_code.js"
 my_scripts_list_6=""
 my_scripts_list_7="jd_daydlt.js"
 my_scripts_list_8="jd_crazy_joy_collect.js jd_crazy_joy_compose.js"
+
+############################是否强制更新diy所添加的js脚本cron############################
+# 设为ture时，默认更新全部diy添加的脚本cron，设为false则diy所添加脚本cron全部不更新
+Enablerenew="true"
 
 ##############################是否使用本地代理(选填)#############################
 Enableproxy="false"
@@ -88,14 +93,6 @@ do
           fi
         done
       fi
-####### 对于大佬库中以jd_、jx_开头的js，不添加作者昵称前缀，直接用原文件名，防止脚本重复#######
-#    if [ ${js:0:3} != "jd_" ] && [ ${js:0:3} != "jx_" ]; then
-#      eval name=$author"_"$js
-#	  echo $name"--原始脚本名不是jd_或jx_开头，已添加作者前缀"
-#    else
-#	  eval name=$js
-#	  echo $name"--原始脚本名以jd_或jx_开头，无需添加作者前缀"
-#    fi
 
     # wget下载是否使用代理
     if [ "${Enableproxy}" = "true" ]; then
@@ -124,17 +121,43 @@ do
 	        sed -i "/hangup/a${script_date} bash jd $croname"  /jd/config/crontab.list
 	        echo -e "已成功添加新cron...\n"
 	      else
-	          grep -v "$croname" /jd/config/crontab.list > output
-		      mv -f output /jd/config/crontab.list
-		      sed -i "/hangup/a${script_date} bash jd $croname"  /jd/config/crontab.list
+	        if [ "${Enablerenew}" = "true" ]; then
+	        	echo -e "准备更新cronlist中已存在的cron...\n"
+	          grep -v "$croname" /jd/config/crontab.list > output.txt
+		        mv -f output.txt /jd/config/crontab.list
+		        sed -i "/hangup/a${script_date} bash jd $croname"  /jd/config/crontab.list
 	          echo -e "已成功替换cron...\n"
+	        else
+	          echo -e "已手动选择不更新cron，故此次不做更新\n"
+	        fi
 	      fi
 	    fi
       else
         [ -f $name.new ] && rm -f $name.new
         echo -e "更新 $name 失败，使用上一次正常的版本...\n"
+        croname=`echo "$name"|awk -F\. '{print $1}'`
+        check_existing_cron=`grep -c "$croname" /jd/config/crontab.list`
+        if [ "${check_existing_cron}" -ne 0 ]; then
+          grep -v "$croname" /jd/config/crontab.list > output.txt
+          mv -f output.txt /jd/config/crontab.list
+          echo -e "已成功删除"$name"的crontablist\n"
+          rm ${name:-default}
+          echo -e "已成功删除"$name"的脚本文件\n"
+          cd $LogDir
+          rm -r ${croname:-default}
+          echo -e "已成功删除"$name"的log文件夹\n"
+          cd $ScriptsDir
+        fi
       fi
     fi
   done
   index=$[$index+1]
 done
+####### 对于大佬库中以jd_、jx_开头的js，不添加作者昵称前缀，直接用原文件名，防止脚本重复#######
+#    if [ ${js:0:3} != "jd_" ] && [ ${js:0:3} != "jx_" ]; then
+#      eval name=$author"_"$js
+#	  echo $name"--原始脚本名不是jd_或jx_开头，已添加作者前缀"
+#    else
+#	  eval name=$js
+#	  echo $name"--原始脚本名以jd_或jx_开头，无需添加作者前缀"
+#    fi
