@@ -112,9 +112,9 @@ function Combin_All {
   export JDSGMH_SHARECODES=$(Combin_Sub ForOtherSgmh)
   #惊喜财富岛(jd_cfd.js)
 
-  export JDCFD_SHARECODES=$(Combin_Sub ForOtherJdcfd "401DA52935EB84F3BDAC92C458E6B530888E1FAA1E33AF78C5315A97994F6CE6")
+  export JDCFD_SHARECODES=$(Combin_Sub ForOtherJdcfd)
   #环球挑战赛(jd_global.js)
-  export JDGLOBAL_SHARECODES=$(Combin_Sub ForOtherGlobal "OTZwWkM3VnZUZlMxNko4Y1NxWjMwQXBReG1kbVFsV0JFKzNDZEIveXMvVT0=@U3Q4ZUgzalZMQjI5UitibjNNc0hidz09@TkFDcUEzQzZuMnpHYlArOElxVWFSUT09")
+  export JDGLOBAL_SHARECODES=$(Combin_Sub ForOtherGlobal)
 
 }
 
