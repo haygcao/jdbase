@@ -1,8 +1,9 @@
-name: 🔄同步🔄
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+name: 🔄do自动同步🔄
 on:
   schedule:
     - cron: '0 0-23/1 * * *'
-  
+  workflow_dispatch:
   watch:
     types: started
   repository_dispatch:
@@ -25,5 +26,9 @@ jobs:
         with:
           source_repo: "https://github.com/nevinee/jd_shell.git"
           source_branch: "master"
+
+       
+
           destination_branch: "nevinee"
-         github_token: ${{ github.event.client_payload.PAT || secrets.PAT }}
+
+          github_token: ${{ github.event.client_payload.PAT || secrets.PAT }}
