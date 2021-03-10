@@ -1,5 +1,5 @@
 # This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-name: 🔄do自动同步🔄
+name: 🔄do  同步🔄
 on:
   schedule:
     - cron: '0 0-23/1 * * *'
