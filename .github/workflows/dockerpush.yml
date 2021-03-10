@@ -13,8 +13,8 @@ jobs:
         uses: ilteoood/docker_buildx@master
         with:
           publish: true
-          imageName: noobx/jd
-          dockerFile: haygcao/jdbase
+          imageName: haygcao/jdbase
+          dockerFile: docker/Dockerfile
           platform: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
          
           dockerUser: ${{ secrets.DOCKER_USERNAME }}
