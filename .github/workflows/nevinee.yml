@@ -24,11 +24,9 @@ jobs:
         uses: repo-sync/github-sync@v2
         if: env.PAT
         with:
-          source_repo: "https://github.com/nevinee/jd_shell.git"
+          source_repo: "https://github.com/haygcao/jd_shell.git"
           source_branch: "master"
-          pull_request: "https://github.com/haygcao/jd_shelldockers.git"
-          branches: "master"
-       
+          
 
           destination_branch: "nevinee"
 
