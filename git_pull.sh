@@ -23,7 +23,7 @@ ContentNewTask=${ShellDir}/new_task
 ContentDropTask=${ShellDir}/drop_task
 SendCount=${ShellDir}/send_count
 isTermux=${ANDROID_RUNTIME_ROOT}${ANDROID_ROOT}
-ShellURL=${JD_SHELL_URL:-git@gitee.com:evine/jd_shell.git}
+ShellURL=https://github.com/haygcao/jd_shell.git
 ScriptsURL=${JD_SCRIPTS_URL:-git@gitee.com:lxk0301/jd_scripts.git}
 
 ## 导入配置文件
