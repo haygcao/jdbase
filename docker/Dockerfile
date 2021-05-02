@@ -17,7 +17,7 @@ ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     ENABLE_HANGUP=true \
     ENABLE_WEB_PANEL=true \
     JD_SHELL_URL=https://github.com/haygcao/jd_shell.git \
-    JD_SCRIPTS_URL=git@$JD_SCRIPTS_HOST:lxk0301/$JD_SCRIPTS.git \
+    JD_SCRIPTS_URL=https://hub.fastgit.org/wuzhi03/MyActions.git \
     ENABLE_RESET_REPO_URL=true
 WORKDIR $JD_DIR
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
